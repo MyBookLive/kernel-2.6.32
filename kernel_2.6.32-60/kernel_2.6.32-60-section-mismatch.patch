@@ -1,0 +1,48 @@
+diff -urN linux-2.6.32.60/arch/powerpc/platforms/44x/apollo3g-usb.c linux-2.6.32.60/arch/powerpc/platforms/44x/apollo3g-usb.c
+--- linux-2.6.32.60/arch/powerpc/platforms/44x/apollo3g-usb.c	2013-05-21 12:38:48.000000000 +0400
++++ linux-2.6.32.60/arch/powerpc/platforms/44x/apollo3g-usb.c	2013-05-26 15:35:49.000000000 +0400
+@@ -51,7 +51,7 @@
+         }
+ };
+ 
+-static struct platform_device *ppc405ex_devs[] __initdata = {
++static struct platform_device *ppc405ex_devs[] __devinitdata = {
+         &usb_otg_device,
+ };
+ 
+diff -urN linux-2.6.32.60/arch/powerpc/platforms/44x/beech-usb.c linux-2.6.32.60/arch/powerpc/platforms/44x/beech-usb.c
+--- linux-2.6.32.60/arch/powerpc/platforms/44x/beech-usb.c	2013-05-21 12:38:48.000000000 +0400
++++ linux-2.6.32.60/arch/powerpc/platforms/44x/beech-usb.c	2013-05-26 15:18:49.000000000 +0400
+@@ -51,7 +51,7 @@
+         }
+ };
+ 
+-static struct platform_device *ppc405ex_devs[] __initdata = {
++static struct platform_device *ppc405ex_devs[] __devinitdata = {
+         &usb_otg_device,
+ };
+ 
+diff -urN linux-2.6.32.60/arch/powerpc/platforms/44x/bluestone-usb.c linux-2.6.32.60/arch/powerpc/platforms/44x/bluestone-usb.c
+--- linux-2.6.32.60/arch/powerpc/platforms/44x/bluestone-usb.c	2013-05-21 12:38:48.000000000 +0400
++++ linux-2.6.32.60/arch/powerpc/platforms/44x/bluestone-usb.c	2013-05-26 15:18:26.000000000 +0400
+@@ -51,7 +51,7 @@
+         }
+ };
+ 
+-static struct platform_device *ppc405ex_devs[] __initdata = {
++static struct platform_device *ppc405ex_devs[] __devinitdata = {
+         &usb_otg_device,
+ };
+ 
+diff -urN linux-2.6.32.60/arch/powerpc/sysdev/ppc4xx_pci.c linux-2.6.32.60/arch/powerpc/sysdev/ppc4xx_pci.c
+--- linux-2.6.32.60/arch/powerpc/sysdev/ppc4xx_pci.c	2013-05-21 12:38:48.000000000 +0400
++++ linux-2.6.32.60/arch/powerpc/sysdev/ppc4xx_pci.c	2013-05-26 15:31:27.000000000 +0400
+@@ -107,7 +107,7 @@
+ 	return -1;
+ }
+ 
+-void ppc440_config_pcie_mps(struct pci_controller *hose)
++static void __init ppc440_config_pcie_mps(struct pci_controller *hose)
+ {
+ 	int i;
+ 	int devfn;

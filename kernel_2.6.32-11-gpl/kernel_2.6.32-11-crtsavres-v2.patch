@@ -1,0 +1,51 @@
+diff -U 3 -H -d -r -- arch/powerpc/Makefile arch/powerpc/Makefile
+--- arch/powerpc/Makefile	2011-02-24 09:38:25.000000000 +0200
++++ arch/powerpc/Makefile	2011-02-22 20:41:44.000000000 +0200
+@@ -93,7 +93,7 @@
+ 	KBUILD_CFLAGS += $(call cc-option,-mtune=power4)
+ endif
+ else
+-LDFLAGS_MODULE	+= arch/powerpc/lib/crtsavres.o
++LDFLAGS_MODULE_PREREQ += arch/powerpc/lib/crtsavres.o
+ endif
+ 
+ ifeq ($(CONFIG_TUNE_CELL),y)
+diff -U 3 -H -d -r -- Makefile Makefile
+--- Makefile	2011-02-24 09:38:25.000000000 +0200
++++ Makefile	2011-02-22 20:39:23.000000000 +0200
+@@ -327,6 +327,7 @@
+ CFLAGS_MODULE   = $(MODFLAGS)
+ AFLAGS_MODULE   = $(MODFLAGS)
+ LDFLAGS_MODULE  = -T $(srctree)/scripts/module-common.lds
++LDFLAGS_MODULE_PREREQ  =
+ CFLAGS_KERNEL	=
+ AFLAGS_KERNEL	=
+ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
+diff -U 3 -H -d -r -- scripts/Makefile.modpost scripts/Makefile.modpost
+--- scripts/Makefile.modpost	2011-02-24 09:38:25.000000000 +0200
++++ scripts/Makefile.modpost	2011-02-22 20:44:17.000000000 +0200
+@@ -110,14 +110,22 @@
+       cmd_cc_o_c = $(CC) $(c_flags) $(CFLAGS_MODULE)	\
+ 		   -c -o $@ $<
+ 
+-$(modules:.ko=.mod.o): %.mod.o: %.mod.c FORCE
++quiet_cmd_as_o_S = AS $(quiet_modtag)  $@
++cmd_as_o_S       = $(CC) $(a_flags) $(AFLAGS_MODULE) -c -o $@ $<
++
++$(LDFLAGS_MODULE_PREREQ): %.o: %.S FORCE
++	$(Q)mkdir -p $(dir $@)
++	$(call if_changed_dep,as_o_S)
++
++$(modules:.ko=.mod.o): %.mod.o: %.mod.c $(LDFLAGS_MODULE_PREREQ) FORCE
+ 	$(call if_changed_dep,cc_o_c)
+ 
+ targets += $(modules:.ko=.mod.o)
+ 
+ # Step 6), final link of the modules
+ quiet_cmd_ld_ko_o = LD [M]  $@
+-      cmd_ld_ko_o = $(LD) -r $(LDFLAGS) $(LDFLAGS_MODULE) -o $@		\
++      cmd_ld_ko_o = $(LD) -r $(LDFLAGS) $(LDFLAGS_MODULE_PREREQ)	\
++			  $(LDFLAGS_MODULE) -o $@			\
+ 			  $(filter-out FORCE,$^)
+ 
+ $(modules): %.ko :%.o %.mod.o FORCE
